@@ -1,0 +1,25 @@
+{
+  "name": "external-adapter",
+  "version": "0.1.0",
+  "description": "Helpers for creating Chainlink External Adapters",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Thomas Hodges (thomas@smartcontract.com)",
+  "keywords": [
+    "Chainlink",
+    "blockchain",
+    "Ethereum",
+    "LINK"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thodges-gh/external-adapter.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "request": "^2.88.2",
+    "request-promise": "^4.2.5"
+  }
+}
