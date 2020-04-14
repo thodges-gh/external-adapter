@@ -98,7 +98,7 @@ class Requester {
           .then(response => {
             if (response.body.error || customError(response.body)) {
               if (n === 1) {
-                reject(response.body)
+                reject('Could not retrieve data', response.body)
               } else {
                 setTimeout(() => {
                   retries--
@@ -122,6 +122,14 @@ class Requester {
       }
       return retry(options, retries)
     })
+  }
+
+  static validateResult (body, path) {
+    const result = this.getResult(body, path)
+    if (typeof result === 'undefined') {
+      throw new ValidationError('Result could not be found in path')
+    }
+    return result
   }
 
   static getResult (body, path) {
