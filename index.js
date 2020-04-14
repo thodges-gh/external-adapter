@@ -20,7 +20,7 @@ class ValidationError extends Error {
 class Validator {
   constructor (input, customParams) {
     this.input = input
-    this.customParams = customParams
+    this.customParams = customParams || {}
     this.baseParams = ['base', 'from', 'coin']
     this.quoteParams = ['quote', 'to', 'market']
     this.validated = {}
@@ -87,6 +87,11 @@ class Validator {
 
 class Requester {
   static requestRetry (options, retries, delay, customError) {
+    if (typeof customError === 'undefined') {
+      customError = function _customError(body) {
+        return false
+      }
+    }
     return new Promise((resolve, reject) => {
       const retry = (options, n) => {
         return rp(options)
