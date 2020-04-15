@@ -63,12 +63,16 @@ class Validator {
 }
 
 class Requester {
-  static requestRetry (options, retries, delay, customError) {
+  static requestRetry (options, customError, retries, delay) {
+    if (typeof options.timeout === 'undefined') options.timeout = 1000
     if (typeof customError === 'undefined') {
       customError = function _customError(body) {
         return false
       }
     }
+    if (typeof retries === 'undefined') retries = 3
+    if (typeof delay === 'undefined') delay = 1000
+
     return new Promise((resolve, reject) => {
       const retry = (options, n) => {
         return rp(options)

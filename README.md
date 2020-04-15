@@ -55,7 +55,7 @@ const customError = (body) => {
 Call `Requester.requestRetry` to have the adapter retry failed connection attempts (along with any customError cases) for the given URL within the options.
 
 ```javascript
-Requester.requestRetry(options, retries, delay, customError).then(response => {
+Requester.requestRetry(options, customError).then(response => {
   callback(response.statusCode, {
     jobRunID,
     data: response.body,
