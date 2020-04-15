@@ -64,6 +64,7 @@ class Validator {
 
 class Requester {
   static requestRetry (options, customError, retries, delay) {
+    if (typeof options === 'string') options = { url: options }
     if (typeof options.timeout === 'undefined') options.timeout = 1000
     if (typeof options.resolveWithFullResponse === 'undefined') options.resolveWithFullResponse = true
     if (typeof options.json === 'undefined') options.json = true
