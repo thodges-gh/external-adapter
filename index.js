@@ -21,11 +21,7 @@ class Validator {
   constructor (input, customParams) {
     this.input = input
     this.customParams = customParams || {}
-    this.baseParams = ['base', 'from', 'coin']
-    this.quoteParams = ['quote', 'to', 'market']
-    this.validated = {}
-    this.validated.data = {}
-    this.validated.data.extra = {}
+    this.validated = { data: { } }
     this.validateInput()
   }
 
@@ -39,49 +35,30 @@ class Validator {
       throw new ValidationError('No data supplied')
     }
 
-    const base = this.validateBaseParam()
-    if (typeof base === 'undefined') {
-      throw new ValidationError('Base parameter required')
-    }
-    this.validated.data.base = base
-
-    const quote = this.validateQuoteParam()
-    if (typeof quote === 'undefined') {
-      throw new ValidationError('Quote parameter required')
-    }
-    this.validated.data.quote = quote
-
-    if (!this.validateExtraParams()) {
-      throw new ValidationError('Extra param required')
+    for (const key in this.customParams) {
+      if (Array.isArray(this.customParams[key])) {
+        this.validateRequiredParam(this.getRequiredArrayParam(this.customParams[key]), key)
+      } else if (this.customParams[key] === true) {
+        this.validateRequiredParam(this.input.data[key], key)
+      } else {
+        this.validated.data[key] = this.input.data[key]
+      }
     }
   }
 
-  validateBaseParam () {
-    for (const param of this.baseParams.concat(this.customParams.base)) {
+  validateRequiredParam (param, key) {
+    if (typeof param === 'undefined') {
+      throw new ValidationError(`Required parameter not supplied: ${key}`)
+    }
+    this.validated.data[key] = param
+  }
+
+  getRequiredArrayParam (keyArray) {
+    for (const param of keyArray) {
       if (typeof this.input.data[param] !== 'undefined') {
         return this.input.data[param]
       }
     }
-  }
-
-  validateQuoteParam () {
-    for (const param of this.quoteParams.concat(this.customParams.quote)) {
-      if (typeof this.input.data[param] !== 'undefined') {
-        return this.input.data[param]
-      }
-    }
-  }
-
-  validateExtraParams () {
-    if (typeof this.customParams.extra !== 'undefined') {
-      for (const param in this.customParams.extra) {
-        if (this.customParams.extra[param]) {
-          this.validated.data.extra = this.input.data[param]
-          return typeof this.input.data[param] !== 'undefined'
-        }
-      }
-    }
-    return true
   }
 }
 
