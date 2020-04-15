@@ -121,5 +121,17 @@ class Requester {
   }
 }
 
+const errorCallback = (id, error, callback) => {
+  if (typeof id === 'undefined') id = '1'
+  if (typeof error === 'undefined') error = 'An error occurred'
+  callback(500, {
+    jobRunID: id,
+    status: 'errored',
+    error,
+    statusCode: 500
+  })
+}
+
 exports.Requester = Requester
 exports.Validator = Validator
+exports.errorCallback = errorCallback
