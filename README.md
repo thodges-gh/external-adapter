@@ -21,7 +21,7 @@ const customParams = {
   // Specific keys can be given a Boolean flag to indicate
   // whether or not the requester is required to provide
   // a value
-  coinid: false
+  endpoint: false
 }
 ```
 
@@ -30,8 +30,10 @@ Validation of the requester's input parameters can be done by creating an instan
 ```javascript
 let validator
 try {
+  // The input data is validated upon instantiating the Validator
   validator = new Validator(input, customParams)
 } catch (error) {
+  // If validation fails, you can immediately exit the function without invoking an API call
   callback(500, {
     jobRunID: input.id,
     status: 'errored',
@@ -39,6 +41,20 @@ try {
     statusCode: 500
   })
 }
+```
+
+Validated params can be obtained from the `validator.validated` object.
+
+```javascript
+// The jobRunID is always supplied by the Chainlink node, but in case it's not supplied
+// upon invoking the external adapter, it will default to '1'
+const jobRunID = validator.validated.id
+// Since endpoint doesn't need to be supplied by the requester, we can assign a default value
+const endpoint = validator.validated.data.endpoint || 'price'
+// We specified that one of the values in the base array should be a parameter in use, that
+// value is stored in the name of the key you specified for the array
+const base = validator.validated.data.base
+const quote = validator.validated.data.quote
 ```
 
 ## Requester
@@ -75,4 +91,10 @@ You can use `validateResult` to obtain the value at the given path. It takes the
 
 ```javascript
 const result = Requester.validateResult(response.body, ['eth', 'usd'])
+```
+
+The `getResult` function is similar to `validateResult` but if the value at the given path is not found, no error will be thrown.
+
+```javascript
+const result = Requester.getResult(response.body, ['eth', 'usd'])
 ```
