@@ -34,12 +34,7 @@ try {
   validator = new Validator(input, customParams)
 } catch (error) {
   // If validation fails, you can immediately exit the function without invoking an API call
-  callback(500, {
-    jobRunID: input.id,
-    status: 'errored',
-    error,
-    statusCode: 500
-  })
+  errorCallback(input.id, error, callback)
 }
 ```
 
@@ -71,20 +66,14 @@ const customError = (body) => {
 Call `Requester.requestRetry` to have the adapter retry failed connection attempts (along with any customError cases) for the given URL within the options.
 
 ```javascript
-Requester.requestRetry(options, customError).then(response => {
-  callback(response.statusCode, {
-    jobRunID,
-    data: response.body,
-    statusCode: response.statusCode
+Requester.requestRetry(options, customError)
+  .then(response => {
+    response.body.result = Requester.validateResult(response.body, ['eth', 'usd'])
+    successCallback(jobRunID, response.statusCode, response.body, callback)
   })
-}).catch(error => {
-  callback(500, {
-    jobRunID,
-    status: 'errored',
-    error,
-    statusCode: 500
+  .catch(error => {
+    errorCallback(jobRunID, error, callback)
   })
-})
 ```
 
 You can use `validateResult` to obtain the value at the given path. It takes the response body's object and an array representing the JSON path to return. If the value at the given path is `undefined`, an error will be thrown.

@@ -108,30 +108,52 @@ class Requester {
     })
   }
 
-  static validateResult (body, path) {
-    const result = this.getResult(body, path)
+  static validateResult (data, path) {
+    if (data.hasOwnProperty('body')) {
+      data = data.body
+    }
+    const result = this.getResult(data, path)
     if (typeof result === 'undefined') {
       throw new ValidationError('Result could not be found in path')
     }
     return result
   }
 
-  static getResult (body, path) {
-    return path.reduce((o, n) => o[n], body)
+  static getResult (data, path) {
+    if (data.hasOwnProperty('body')) {
+      data = data.body
+    }
+    return path.reduce((o, n) => o[n], data)
   }
-}
 
-const errorCallback = (id, error, callback) => {
-  if (typeof id === 'undefined') id = '1'
-  if (typeof error === 'undefined') error = 'An error occurred'
-  callback(500, {
-    jobRunID: id,
-    status: 'errored',
-    error,
-    statusCode: 500
-  })
+  static errorCallback (jobRunID, error, callback) {
+    if (typeof jobRunID === 'undefined') jobRunID = '1'
+    if (typeof error === 'undefined') error = 'An error occurred'
+    callback(500, {
+      jobRunID,
+      status: 'errored',
+      error,
+      statusCode: 500
+    })
+  }
+
+  static successCallback (jobRunID, statusCode, data, callback) {
+    if (typeof jobRunID === 'undefined') jobRunID = '1'
+    if (typeof statusCode === 'undefined') statusCode = 200
+    if (data.hasOwnProperty('body')) {
+      data = data.body
+    }
+    if (!data.hasOwnProperty('result')) {
+      data.result = null
+    }
+    callback(statusCode, {
+      jobRunID,
+      data,
+      result: data.result,
+      statusCode
+    })
+  }
 }
 
 exports.Requester = Requester
 exports.Validator = Validator
-exports.errorCallback = errorCallback
