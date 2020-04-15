@@ -33,21 +33,25 @@ try {
   // The input data is validated upon instantiating the Validator
   validator = new Validator(input, customParams)
 } catch (error) {
-  // If validation fails, you can immediately exit the function without invoking an API call
-  errorCallback(input.id, error, callback)
+  // If validation fails, you can immediately exit the function without
+  // invoking an API call
+  Requester.errorCallback(input.id, error, callback)
 }
 ```
 
 Validated params can be obtained from the `validator.validated` object.
 
 ```javascript
-// The jobRunID is always supplied by the Chainlink node, but in case it's not supplied
-// upon invoking the external adapter, it will default to '1'
+// The jobRunID is always supplied by the Chainlink node, but in case
+// it's not supplied upon invoking the external adapter, it will default
+// to '1'
 const jobRunID = validator.validated.id
-// Since endpoint doesn't need to be supplied by the requester, we can assign a default value
+// Since endpoint doesn't need to be supplied by the requester, we can
+// assign a default value
 const endpoint = validator.validated.data.endpoint || 'price'
-// We specified that one of the values in the base array should be a parameter in use, that
-// value is stored in the name of the key you specified for the array
+// We specified that one of the values in the base array should be a
+// parameter in use, that value is stored in the name of the key you
+// specified for the array
 const base = validator.validated.data.base
 const quote = validator.validated.data.quote
 ```
@@ -68,15 +72,17 @@ Call `Requester.requestRetry` to have the adapter retry failed connection attemp
 ```javascript
 Requester.requestRetry(options, customError)
   .then(response => {
+    // Optionally store the desired result at body.result
     response.body.result = Requester.validateResult(response.body, ['eth', 'usd'])
-    successCallback(jobRunID, response.statusCode, response.body, callback)
+    // Return the successful response back to the Chainlink node
+    Requester.successCallback(jobRunID, response.statusCode, response.body, callback)
   })
   .catch(error => {
-    errorCallback(jobRunID, error, callback)
+    Requester.errorCallback(jobRunID, error, callback)
   })
 ```
 
-You can use `validateResult` to obtain the value at the given path. It takes the response body's object and an array representing the JSON path to return. If the value at the given path is `undefined`, an error will be thrown.
+You can use `validateResult` to obtain the value at the given path. It takes the response body's object and an array representing the JSON path to return. If the value at the given path is `undefined` or `0`, an error will be thrown.
 
 ```javascript
 const result = Requester.validateResult(response.body, ['eth', 'usd'])

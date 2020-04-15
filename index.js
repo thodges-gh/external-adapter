@@ -116,6 +116,9 @@ class Requester {
     if (typeof result === 'undefined') {
       throw new ValidationError('Result could not be found in path')
     }
+    if (Number(result) === 0) {
+      throw new ValidationError('Result cannot be 0')
+    }
     return result
   }
 
