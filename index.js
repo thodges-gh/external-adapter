@@ -18,35 +18,42 @@ class ValidationError extends Error {
 }
 
 class Validator {
-  constructor (input, customParams) {
+  constructor (input, customParams, callback) {
     this.input = input
     this.customParams = customParams || {}
     this.validated = { data: { } }
-    this.validateInput()
+    this.validateInput(callback)
   }
 
-  validateInput () {
+  validateInput (callback) {
     if (typeof this.input.id === 'undefined') {
       this.input.id = '1'
     }
     this.validated.id = this.input.id
 
     if (typeof this.input.data === 'undefined') {
-      throw new ValidationError('No data supplied')
+      const error = new ValidationError('No data supplied')
+      Requester.errorCallback(this.input.id, error, callback)
     }
 
-    for (const key in this.customParams) {
-      if (Array.isArray(this.customParams[key])) {
-        this.validateRequiredParam(this.getRequiredArrayParam(this.customParams[key]), key)
-      } else if (this.customParams[key] === true) {
-        this.validateRequiredParam(this.input.data[key], key)
-      } else {
-        this.validated.data[key] = this.input.data[key]
+    try {
+      for (const key in this.customParams) {
+        if (Array.isArray(this.customParams[key])) {
+          this.validateRequiredParam(this.getRequiredArrayParam(this.customParams[key]), key)
+        } else if (this.customParams[key] === true) {
+          this.validateRequiredParam(this.input.data[key], key, callback)
+        } else {
+          if (typeof this.input.data[key] !== 'undefined') {
+            this.validated.data[key] = this.input.data[key]
+          }
+        }
       }
+    } catch (error) {
+      Requester.errorCallback(this.input.id, error, callback)
     }
   }
 
-  validateRequiredParam (param, key) {
+  validateRequiredParam (param, key, callback) {
     if (typeof param === 'undefined') {
       throw new ValidationError(`Required parameter not supplied: ${key}`)
     }

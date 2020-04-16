@@ -39,19 +39,14 @@ The Validator relies on the data supplied in the customParams object to ensure t
 
 - `input` (Object): The request payload from the Chainlink node
 - `customParams` (Object): A customParams object as shown above
+- `callback` (Function): The callback function to execute if validation fails
 
 Validation of the requester's input parameters can be done by creating an instance of the Validator.
 
 ```javascript
-let validator
-try {
-  // The input data is validated upon instantiating the Validator
-  validator = new Validator(input, customParams)
-} catch (error) {
-  // If validation fails, you can immediately exit the function without
-  // invoking an API call
-  Requester.errorCallback(input.id, error, callback)
-}
+// The input data is validated upon instantiating the Validator
+// If input validation fails, the callback is called with an error
+const validator = new Validator(input, customParams, callback)
 ```
 
 Validated params can be obtained from the `validator.validated` object.
@@ -98,8 +93,7 @@ Requester.requestRetry(options, customError)
   .then(response => {
     // Optionally store the desired result at body.result
     response.body.result = Requester.validateResult(response.body,
-                                                    ['eth', 'usd']
-                           )
+                                                    ['eth', 'usd'])
     // Return the successful response back to the Chainlink node
     Requester.successCallback(jobRunID,
                               response.statusCode,
