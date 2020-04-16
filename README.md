@@ -95,13 +95,11 @@ Requester.requestRetry(options, customError)
     response.body.result = Requester.validateResult(response.body,
                                                     ['eth', 'usd'])
     // Return the successful response back to the Chainlink node
-    Requester.successCallback(jobRunID,
-                              response.statusCode,
-                              response.body,
-                              callback)
+    callback(response.statusCode, Requester.successCallback(jobRunID,
+                                                            response))
   })
   .catch(error => {
-    Requester.errorCallback(jobRunID, error, callback)
+    callback(500, Requester.errorCallback(jobRunID, error))
   })
 ```
 
@@ -133,29 +131,31 @@ const result = Requester.getResult(response.body, ['eth', 'usd'])
 
 ### errorCallback
 
+Returns the error object formatted in a way which is expected by the Chainlink node.
+
 #### Arguments
 
 - `jobRunID` (String): The job's run ID
 - `error` (Object): The error object
-- `callback` (Function): The callback function to execute
 
 ```javascript
 .catch(error => {
-  Requester.errorCallback(jobRunID, error, callback)
+  callback(500, Requester.errorCallback(jobRunID, error))
 })
 ```
 
 ### successCallback
 
+Returns the response object formatted in a way which is expected by the Chainlink node.
+
 #### Arguments
 
 - `jobRunID` (String): The job's run ID
-- `statusCode` (Number): The HTTP status code
-- `body` (Object): The JSON payload of the response
-- `callback` (Function): The callback function to execute
+- `response` (Object): The response object
 
 ```javascript
 .then(response => {
-  Requester.successCallback(jobRunID, response.statusCode, response.body, callback)
+  callback(response.statusCode, Requester.successCallback(jobRunID,
+                                                          response))
 })
 ```

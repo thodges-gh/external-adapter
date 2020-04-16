@@ -33,7 +33,7 @@ class Validator {
 
     if (typeof this.input.data === 'undefined') {
       const error = new ValidationError('No data supplied')
-      Requester.errorCallback(this.input.id, error, callback)
+      Requester.validationErrorCallback(this.input.id, error, callback)
     }
 
     try {
@@ -49,7 +49,7 @@ class Validator {
         }
       }
     } catch (error) {
-      Requester.errorCallback(this.input.id, error, callback)
+      Requester.validationErrorCallback(this.input.id, error, callback)
     }
   }
 
@@ -136,32 +136,39 @@ class Requester {
     return path.reduce((o, n) => o[n], data)
   }
 
-  static errorCallback (jobRunID, error, callback) {
+  static validationErrorCallback (jobRunID, error, callback) {
     if (typeof jobRunID === 'undefined') jobRunID = '1'
     if (typeof error === 'undefined') error = 'An error occurred'
-    callback(500, {
+    setTimeout(callback(500, {
       jobRunID,
       status: 'errored',
       error,
       statusCode: 500
-    })
+    }), 0)
   }
 
-  static successCallback (jobRunID, statusCode, data, callback) {
+  static errorCallback (jobRunID, error) {
     if (typeof jobRunID === 'undefined') jobRunID = '1'
-    if (typeof statusCode === 'undefined') statusCode = 200
-    if (data.hasOwnProperty('body')) {
-      data = data.body
-    }
-    if (!data.hasOwnProperty('result')) {
-      data.result = null
-    }
-    callback(statusCode, {
+    if (typeof error === 'undefined') error = 'An error occurred'
+    return {
       jobRunID,
-      data,
-      result: data.result,
-      statusCode
-    })
+      status: 'errored',
+      error,
+      statusCode: 500
+    }
+  }
+
+  static successCallback (jobRunID, response) {
+    if (typeof jobRunID === 'undefined') jobRunID = '1'
+    if (!response.body.hasOwnProperty('result')) {
+      response.body.result = null
+    }
+    return {
+      jobRunID,
+      data: response.body,
+      result: response.body.result,
+      statusCode: response.statusCode
+    }
   }
 }
 
