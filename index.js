@@ -147,7 +147,7 @@ class Requester {
     }), 0)
   }
 
-  static errorCallback (jobRunID, error) {
+  static errored (jobRunID, error) {
     if (typeof jobRunID === 'undefined') jobRunID = '1'
     if (typeof error === 'undefined') error = 'An error occurred'
     return {
@@ -158,7 +158,7 @@ class Requester {
     }
   }
 
-  static successCallback (jobRunID, response) {
+  static success (jobRunID, response) {
     if (typeof jobRunID === 'undefined') jobRunID = '1'
     if (!response.body.hasOwnProperty('result')) {
       response.body.result = null

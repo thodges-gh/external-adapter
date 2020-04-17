@@ -95,11 +95,10 @@ Requester.requestRetry(options, customError)
     response.body.result = Requester.validateResult(response.body,
                                                     ['eth', 'usd'])
     // Return the successful response back to the Chainlink node
-    callback(response.statusCode, Requester.successCallback(jobRunID,
-                                                            response))
+    callback(response.statusCode, Requester.success(jobRunID, response))
   })
   .catch(error => {
-    callback(500, Requester.errorCallback(jobRunID, error))
+    callback(500, Requester.errored(jobRunID, error))
   })
 ```
 
@@ -129,7 +128,7 @@ The `getResult` function is similar to `validateResult` but if the value at the 
 const result = Requester.getResult(response.body, ['eth', 'usd'])
 ```
 
-### errorCallback
+### errored
 
 Returns the error object formatted in a way which is expected by the Chainlink node.
 
@@ -140,11 +139,11 @@ Returns the error object formatted in a way which is expected by the Chainlink n
 
 ```javascript
 .catch(error => {
-  callback(500, Requester.errorCallback(jobRunID, error))
+  callback(500, Requester.errored(jobRunID, error))
 })
 ```
 
-### successCallback
+### success
 
 Returns the response object formatted in a way which is expected by the Chainlink node.
 
@@ -155,7 +154,6 @@ Returns the response object formatted in a way which is expected by the Chainlin
 
 ```javascript
 .then(response => {
-  callback(response.statusCode, Requester.successCallback(jobRunID,
-                                                          response))
+  callback(response.statusCode, Requester.success(jobRunID, response))
 })
 ```
