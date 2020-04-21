@@ -126,7 +126,7 @@ class Requester {
     if (Number(result) === 0) {
       throw new ValidationError('Result cannot be 0')
     }
-    return result
+    return Number(result)
   }
 
   static getResult (data, path) {

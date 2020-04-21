@@ -109,7 +109,7 @@ Requester.requestRetry(options, customError)
 - `body` (Object): The response's body object
 - `path` (Array): An array of strings (or values of strings) or numbers for indicies to walk the JSON path
 
-You can use `validateResult` to obtain the value at the given path. It takes the response body's object and an array representing the JSON path to return. If the value at the given path is `undefined` or `0`, an error will be thrown.
+You can use `validateResult` to obtain the value at the given path and receive a number. It takes the response body's object and an array representing the JSON path to return. If the value at the given path is `undefined` or `0`, an error will be thrown.
 
 ```javascript
 const result = Requester.validateResult(response.body, ['eth', 'usd'])
