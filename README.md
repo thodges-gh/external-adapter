@@ -71,9 +71,9 @@ const quote = validator.validated.data.quote
 The Requester is a wrapper around a retryable pattern for reaching out to an endpoint. It can be supplied with a customError object to describe the custom error cases which the adapter should retry fetching data even if the response was successful.
 
 ```javascript
-const customError = (body) => {
+const customError = (data) => {
   // Error cases should return true
-  if (Object.keys(body).length === 0) return true
+  if (Object.keys(data).length === 0) return true
   // If no error case is caught, return false
   return false
 }
@@ -83,7 +83,7 @@ const customError = (body) => {
 
 #### Arguments
 
-- `options` (Object): A [request-promise](https://www.npmjs.com/package/request-promise) options object
+- `options` (Object): An [axios](https://www.npmjs.com/package/axios) config object
 - `customError` (Object): A customError object as shown above
 - `retries` (Number): The number of retries the adapter should attempt to call the API
 - `delay` (Number): The delay between retries (value in ms)
@@ -93,8 +93,8 @@ Call `Requester.request` to have the adapter retry failed connection attempts (a
 ```javascript
 Requester.request(options, customError, retries, delay)
   .then(response => {
-    // Optionally store the desired result at body.result
-    response.body.result = Requester.validateResult(response.body,
+    // Optionally store the desired result at data.result
+    response.data.result = Requester.validateResultNumber(response.data,
                                                     ['eth', 'usd'])
     // Return the successful response back to the Chainlink node
     callback(response.statusCode, Requester.success(jobRunID, response))
@@ -104,30 +104,30 @@ Requester.request(options, customError, retries, delay)
   })
 ```
 
-### validateResult
+### validateResultNumber
 
 #### Arguments
 
-- `body` (Object): The response's body object
+- `data` (Object): The response's data object
 - `path` (Array): An array of strings (or values of strings) or numbers for indicies to walk the JSON path
 
-You can use `validateResult` to obtain the value at the given path and receive a number. It takes the response body's object and an array representing the JSON path to return. If the value at the given path is `undefined` or `0`, an error will be thrown.
+You can use `validateResultNumber` to obtain the value at the given path and receive a number. It takes the response data's object and an array representing the JSON path to return. If the value at the given path is `undefined` or `0`, an error will be thrown.
 
 ```javascript
-const result = Requester.validateResult(response.body, ['eth', 'usd'])
+const result = Requester.validateResultNumber(response.data, ['eth', 'usd'])
 ```
 
 ### getResult
 
 #### Arguments
 
-- `body` (Object): The response's body object
+- `data` (Object): The response's data object
 - `path` (Array): An array of strings (or values of strings) or numbers for indicies to walk the JSON path
 
-The `getResult` function is similar to `validateResult` but if the value at the given path is not found, no error will be thrown.
+The `getResult` function is similar to `validateResultNumber` but if the value at the given path is not found, no error will be thrown.
 
 ```javascript
-const result = Requester.getResult(response.body, ['eth', 'usd'])
+const result = Requester.getResult(response.data, ['eth', 'usd'])
 ```
 
 ### errored

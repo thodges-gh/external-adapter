@@ -45,7 +45,7 @@ class Requester {
     })
   }
 
-  static validateResult (data, path) {
+  static validateResultNumber (data, path) {
     if (data.hasOwnProperty('data')) {
       data = data.data
     }
@@ -53,8 +53,8 @@ class Requester {
     if (typeof result === 'undefined') {
       throw new AdapterError('Result could not be found in path')
     }
-    if (Number(result) === 0) {
-      throw new AdapterError('Result cannot be 0')
+    if (Number(result) === 0 || isNaN(Number(result))) {
+      throw new AdapterError('Invalid result')
     }
     return Number(result)
   }
@@ -87,7 +87,7 @@ class Requester {
       jobRunID,
       data: response.data,
       result: response.data.result,
-      statusCode: response.statusCode
+      statusCode: response.status
     }
   }
 }
