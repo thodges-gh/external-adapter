@@ -5,6 +5,11 @@ class Requester {
   static request (options, customError, retries = 3, delay = 1000) {
     if (typeof options === 'string') options = { url: options }
     if (typeof options.timeout === 'undefined') options.timeout = 3000
+    if (typeof customError === 'undefined') {
+      customError = function _customError(data) {
+        return false
+      }
+    }
     if (typeof customError !== 'function') {
       delay = retries
       retries = customError
@@ -46,9 +51,6 @@ class Requester {
   }
 
   static validateResultNumber (data, path) {
-    if (data.hasOwnProperty('data')) {
-      data = data.data
-    }
     const result = this.getResult(data, path)
     if (typeof result === 'undefined') {
       throw new AdapterError('Result could not be found in path')
