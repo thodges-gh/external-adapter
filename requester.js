@@ -60,9 +60,6 @@ class Requester {
   }
 
   static getResult (data, path) {
-    if (data.hasOwnProperty('data')) {
-      data = data.data
-    }
     return path.reduce((o, n) => o[n], data)
   }
 

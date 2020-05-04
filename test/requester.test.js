@@ -164,6 +164,16 @@ describe('Requester', () => {
       const result = Requester.getResult(data, ['result'])
       assert.equal(result, 'success')
     })
+
+    it('returns undefined if the input is not data', async () => {
+      options.url = successUrl
+      const response = await Requester.request(options, 1, 0)
+      assert.equal(server.errorCount, 0)
+      assert.equal(response.data.result, 'success')
+      assert.equal(response.data.value, 1)
+      const result = Requester.getResult(response, ['result'])
+      assert.equal(typeof(result), 'undefined')
+    })
   })
 
   describe('Requester.errored', () => {
