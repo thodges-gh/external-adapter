@@ -37,16 +37,16 @@ The Validator relies on the data supplied in the customParams object to ensure t
 
 #### Arguments
 
+- `callback` (Function): The callback function to execute if validation fails
 - `input` (Object): The request payload from the Chainlink node
 - `customParams` (Object): A customParams object as shown above
-- `callback` (Function): The callback function to execute if validation fails
 
 Validation of the requester's input parameters can be done by creating an instance of the Validator.
 
 ```javascript
 // The input data is validated upon instantiating the Validator
 // If input validation fails, the callback is called with an error
-const validator = new Validator(input, customParams, callback)
+const validator = new Validator(callback, input, customParams)
 ```
 
 Validated params can be obtained from the `validator.validated` object.
@@ -79,17 +79,19 @@ const customError = (body) => {
 }
 ```
 
-### requestRetry
+### request
 
 #### Arguments
 
 - `options` (Object): A [request-promise](https://www.npmjs.com/package/request-promise) options object
 - `customError` (Object): A customError object as shown above
+- `retries` (Number): The number of retries the adapter should attempt to call the API
+- `delay` (Number): The delay between retries (value in ms)
 
-Call `Requester.requestRetry` to have the adapter retry failed connection attempts (along with any customError cases) for the given URL within the options.
+Call `Requester.request` to have the adapter retry failed connection attempts (along with any customError cases) for the given URL within the options.
 
 ```javascript
-Requester.requestRetry(options, customError)
+Requester.request(options, customError, retries, delay)
   .then(response => {
     // Optionally store the desired result at body.result
     response.body.result = Requester.validateResult(response.body,
