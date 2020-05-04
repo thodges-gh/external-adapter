@@ -1,27 +1,25 @@
-const rp = require('request-promise')
+const axios = require('axios')
 const { AdapterError } = require('./adapterError')
 
 class Requester {
   static request (options, customError, retries = 3, delay = 1000) {
     if (typeof options === 'string') options = { url: options }
     if (typeof options.timeout === 'undefined') options.timeout = 3000
-    options.resolveWithFullResponse = true
-    options.json = true
     if (typeof customError !== 'function') {
       delay = retries
       retries = customError
-      customError = function _customError(body) {
+      customError = function _customError(data) {
         return false
       }
     }
 
     return new Promise((resolve, reject) => {
       const retry = (options, n) => {
-        return rp(options)
+        return axios(options)
           .then(response => {
-            if (response.body.error || customError(response.body)) {
+            if (response.data.error || customError(response.data)) {
               if (n === 1) {
-                reject(new AdapterError('Could not retrieve valid data: ' + JSON.stringify(response.body)))
+                reject(new AdapterError('Could not retrieve valid data: ' + JSON.stringify(response.data)))
               } else {
                 setTimeout(() => {
                   retries--
@@ -48,8 +46,8 @@ class Requester {
   }
 
   static validateResult (data, path) {
-    if (data.hasOwnProperty('body')) {
-      data = data.body
+    if (data.hasOwnProperty('data')) {
+      data = data.data
     }
     const result = this.getResult(data, path)
     if (typeof result === 'undefined') {
@@ -62,8 +60,8 @@ class Requester {
   }
 
   static getResult (data, path) {
-    if (data.hasOwnProperty('body')) {
-      data = data.body
+    if (data.hasOwnProperty('data')) {
+      data = data.data
     }
     return path.reduce((o, n) => o[n], data)
   }
@@ -82,13 +80,13 @@ class Requester {
   }
 
   static success (jobRunID = '1', response) {
-    if (!response.body.hasOwnProperty('result')) {
-      response.body.result = null
+    if (!response.data.hasOwnProperty('result')) {
+      response.data.result = null
     }
     return {
       jobRunID,
-      data: response.body,
-      result: response.body.result,
+      data: response.data,
+      result: response.data.result,
       statusCode: response.statusCode
     }
   }
