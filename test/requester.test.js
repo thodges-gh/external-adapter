@@ -1,5 +1,5 @@
 const { assert } = require('chai')
-const { Requester } = require('../requester')
+const { Requester } = require('../src/requester')
 const { Server } = require('./helpers/server')
 
 describe('Requester', () => {
