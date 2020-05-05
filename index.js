@@ -1,6 +1,6 @@
-const { Requester } = require('./requester')
-const { Validator } = require('./validator')
-const { AdapterError } = require('./adapterError')
+const { Requester } = require('./src/requester')
+const { Validator } = require('./src/validator')
+const { AdapterError } = require('./src/adapterError')
 
 exports.Requester = Requester
 exports.Validator = Validator

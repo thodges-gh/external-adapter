@@ -95,7 +95,7 @@ Requester.request(options, customError, retries, delay)
   .then(response => {
     // Optionally store the desired result at data.result
     response.data.result = Requester.validateResultNumber(response.data,
-                                                    ['eth', 'usd'])
+                                                          ['eth', 'usd'])
     // Return the successful response back to the Chainlink node
     callback(response.statusCode, Requester.success(jobRunID, response))
   })

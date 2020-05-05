@@ -1,5 +1,5 @@
 const { assert } = require('chai')
-const { Validator } = require('../validator')
+const { Validator } = require('../src/validator')
 
 describe('Validator', () => {
   let called = false
