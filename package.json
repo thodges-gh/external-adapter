@@ -1,10 +1,10 @@
 {
   "name": "external-adapter",
-  "version": "0.1.15",
+  "version": "0.2.0",
   "description": "Helpers for creating Chainlink External Adapters",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "yarn mocha --exit --timeout 0"
   },
   "author": "Thomas Hodges (thomas@smartcontract.com)",
   "keywords": [
@@ -19,7 +19,11 @@
   },
   "license": "MIT",
   "dependencies": {
-    "request": "^2.88.2",
-    "request-promise": "^4.2.5"
+    "axios": "^0.19.2"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "express": "^4.17.1",
+    "mocha": "^7.1.2"
   }
 }
