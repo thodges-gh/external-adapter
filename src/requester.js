@@ -2,9 +2,12 @@ const axios = require('axios')
 const { AdapterError } = require('./adapterError')
 
 class Requester {
-  static request (options, customError, retries = 3, delay = 1000) {
-    if (typeof options === 'string') options = { url: options }
-    if (typeof options.timeout === 'undefined') options.timeout = 3000
+  static request (config, customError, retries = 3, delay = 1000) {
+    if (typeof config === 'string') config = { url: config }
+    if (typeof config.timeout === 'undefined') {
+      const timeout = Number(process.env.TIMEOUT)
+      config.timeout = !isNaN(timeout) ? timeout : 3000
+    }
     if (typeof customError === 'undefined') {
       customError = function _customError(data) {
         return false
@@ -19,8 +22,8 @@ class Requester {
     }
 
     return new Promise((resolve, reject) => {
-      const retry = (options, n) => {
-        return axios(options)
+      const retry = (config, n) => {
+        return axios(config)
           .then(response => {
             if (response.data.error || customError(response.data)) {
               if (n === 1) {
@@ -28,7 +31,7 @@ class Requester {
               } else {
                 setTimeout(() => {
                   retries--
-                  retry(options, retries)
+                  retry(config, retries)
                 }, delay)
               }
             } else {
@@ -41,12 +44,12 @@ class Requester {
             } else {
               setTimeout(() => {
                 retries--
-                retry(options, retries)
+                retry(config, retries)
               }, delay)
             }
           })
       }
-      return retry(options, retries)
+      return retry(config, retries)
     })
   }
 

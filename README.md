@@ -83,15 +83,15 @@ const customError = (data) => {
 
 #### Arguments
 
-- `options` (Object): An [axios](https://www.npmjs.com/package/axios) config object
+- `config` (Object): An [axios](https://www.npmjs.com/package/axios) config object
 - `customError` (Object): A customError object as shown above
 - `retries` (Number): The number of retries the adapter should attempt to call the API
 - `delay` (Number): The delay between retries (value in ms)
 
-Call `Requester.request` to have the adapter retry failed connection attempts (along with any customError cases) for the given URL within the options.
+Call `Requester.request` to have the adapter retry failed connection attempts (along with any customError cases) for the given URL within the config.
 
 ```javascript
-Requester.request(options, customError, retries, delay)
+Requester.request(config, customError, retries, delay)
   .then(response => {
     // Optionally store the desired result at data.result
     response.data.result = Requester.validateResultNumber(response.data,
