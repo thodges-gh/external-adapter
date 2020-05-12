@@ -1,5 +1,6 @@
 const { AdapterError } = require('./adapterError')
 const { Requester } = require('./requester')
+const { logger } = require('./logger')
 
 class Validator {
   constructor (callback, input = {}, customParams = {}) {
@@ -29,13 +30,16 @@ class Validator {
         }
       }
     } catch (error) {
+      logger.error(`Error validating input: ${error}`)
       Requester.adapterErrorCallback(this.input.id, error, callback)
     }
   }
 
   validateRequiredParam (param, key, callback) {
     if (typeof param === 'undefined') {
-      throw new AdapterError(`Required parameter not supplied: ${key}`)
+      const error = `Required parameter not supplied: ${key}`
+      logger.error(error)
+      throw new AdapterError(error)
     } else {
       this.validated.data[key] = param
     }
