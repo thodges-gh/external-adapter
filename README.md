@@ -1,6 +1,6 @@
 # External Adapter Helper
 
-This repo helps with creating Chainlink external adapters in NodeJS.
+**This project has moved to the [external-adapters-js](https://github.com/smartcontractkit/external-adapters-js/tree/master/external-adapter) repo. Use @chainlink/external-adapter for the latest package.**
 
 ## Adding to your project
 
